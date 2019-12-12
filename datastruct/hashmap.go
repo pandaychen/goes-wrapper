@@ -1,6 +1,7 @@
 package datastruct
 
 //a fix-size memory hashmap,use lru
+//use slice simulate hashtable
 
 import (
 	"fmt"
