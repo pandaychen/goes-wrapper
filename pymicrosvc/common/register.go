@@ -5,6 +5,7 @@ import (
 )
 
 /*
+
 	注册到KV系统中的VALUE
 	1. ETCD -- value
 	2. consul -- tags
