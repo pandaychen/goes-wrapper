@@ -12,7 +12,7 @@ RequireTransportSecurity：是否需要基于 TLS 认证进行安全传输
 */
 
 import (
-	"../enums"
+	"github.com/pandaychen/goes-wrapper//pymicrosvc/enums"
 	"golang.org/x/net/context"
 	"fmt"
 )
