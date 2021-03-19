@@ -7,8 +7,9 @@ type SWindow struct {
 	windowsize int
 }
 
+// create a slidingWindow
 func NewSWindow(windowsize int) *SWindow {
-	buckets := make([]*Bucket, size)
+	buckets := make([]*SWinBucket, size)
 	for i := 0; i < windowsize; i++ {
 		buckets[i] = new(SWinBucket)
 	}
@@ -35,7 +36,7 @@ func (w *SWindow) ResetFixedBucket(index int) {
 }
 
 func (w *SWindow) Reset(index int) {
-	for _, v := range buckets {
+	for _, v := range w.buckets {
 		if v == nil {
 			continue
 		}

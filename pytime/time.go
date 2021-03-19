@@ -5,6 +5,22 @@ import (
 	"time"
 )
 
+// Use the long enough past time as start time(one year ago), in case timex.Now() - lastTime equals 0
+var startTime = time.Now().AddDate(-1, -1, -1)
+
+// 计算相对时间差
+func Duration2Now() time.Duration {
+	return time.Since(startTime)
+}
+
+func Duration2Fixed(d time.Duration) time.Duration {
+	return time.Since(startTime) - d
+}
+
+func GetRelativeCurrentTime() time.Time {
+	return startTime.Add(Duration2Now())
+}
+
 func GetDuration(timestr string) time.Duration {
 	dur, err := time.ParseDuration(timestr)
 	if err != nil {
@@ -30,3 +46,9 @@ func (d Duration) Shrink(c context.Context) (Duration, context.Context, context.
 	ctx, cancel := context.WithTimeout(c, time.Duration(d))
 	return d, ctx, cancel
 }
+
+/*
+func main() {
+	fmt.Println(int64(Duration2Now()),Duration2Now())	// 34128000000137802 9480h0m0.00013898s
+}
+*/
