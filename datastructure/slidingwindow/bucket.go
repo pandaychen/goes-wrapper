@@ -9,7 +9,7 @@ type SWinBucket struct {
 
 func (b *SWinBucket) add(v float64) {
 	b.Sum += v
-	b.Count++
+	b.Count++ // 只是累加窗口中的值（rollingcounter）
 }
 
 func (b *SWinBucket) reset() {
