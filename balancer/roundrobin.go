@@ -1,13 +1,14 @@
 package balancer
 
 import (
+	"errors"
 	"sync"
 
 	"go.uber.org/zap"
 )
 
 type RoundRobinWrapper interface {
-	AddNode(node interface{}, weight int)
+	AddNode(key string, node interface{}, weight int) error
 	RemoveAllNodes()
 	ResetAllNodes()
 
@@ -18,8 +19,9 @@ type RoundRobinWrapper interface {
 
 // Nginx的weight round robin实现
 type NginxWeightRoundrobinNode struct {
-	NodeMetadata    interface{}
-	InitWeight      int //初始化权重
+	NodeKey         string
+	NodeMetadata    interface{} //save all..(like grpc balancer.SubConn)
+	InitWeight      int         //初始化权重
 	CurrentWeight   int
 	EffectiveWeight int //每次pick之后的更新的权重值
 }
@@ -36,8 +38,15 @@ func NewNginxWeightRoundrobin(logger *zap.Logger) *NginxWeightRoundrobin {
 }
 
 //增加权重节点
-func (r *NginxWeightRoundrobin) AddNode(server interface{}, weight int) {
+func (r *NginxWeightRoundrobin) AddNode(key string, server interface{}, weight int) error {
+	for _, tnode := range r.Nodes {
+		if tnode.NodeKey == key {
+			return errors.New("node exists")
+		}
+	}
+
 	node := &NginxWeightRoundrobinNode{
+		NodeKey:         key,
 		NodeMetadata:    server,
 		InitWeight:      weight,
 		EffectiveWeight: weight,
@@ -66,7 +75,7 @@ func (r *NginxWeightRoundrobin) GetNextNode() *NginxWeightRoundrobinNode {
 	if r.Count == 0 {
 		return nil
 	} else if r.Count == 1 {
-		return r.Nodes[0].NodeMetadata.(*NginxWeightRoundrobinNode)
+		return r.Nodes[0]
 	} else {
 		total := 0
 		//range all nodes, choose a probably node
