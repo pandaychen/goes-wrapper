@@ -1,5 +1,10 @@
 package pyfile
 
+import (
+	"strconv"
+	"strings"
+)
+
 // ParseUintList parses and validates the specified string as the value
 // found in some cgroup file (e.g. cpuset.cpus, cpuset.mems), which could be
 // one of the formats below. Note that duplicates are actually allowed in the
