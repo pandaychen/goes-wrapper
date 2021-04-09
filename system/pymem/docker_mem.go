@@ -4,8 +4,8 @@ import "github.com/shirou/gopsutil/mem"
 
 type DockerMem struct{}
 
-func NewDockerMem() DockerMem {
-	return DockerMem{}
+func NewDockerMem() *DockerMem {
+	return &DockerMem{}
 }
 
 func (m *DockerMem) GetMemoryInfo() (Meminfo, error) {

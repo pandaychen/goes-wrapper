@@ -12,8 +12,9 @@ type Meminfo struct {
 
 type NormalMem struct{}
 
-func NewNormalMem() NormalMem {
-	return NormalMem{}
+//must return a pointer
+func NewNormalMem() *NormalMem {
+	return &NormalMem{}
 }
 
 func (m *NormalMem) GetMemoryInfo() (Meminfo, error) {
