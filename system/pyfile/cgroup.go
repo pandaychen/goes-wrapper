@@ -3,6 +3,8 @@ package pyfile
 import (
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // ParseUintList parses and validates the specified string as the value

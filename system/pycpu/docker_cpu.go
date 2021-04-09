@@ -28,6 +28,7 @@ type DockerCpuInfo struct {
 	Logger   *zap.Logger
 	Pid      int //当前进程号
 	IsPod    bool
+	Multiple float64 //放大倍数
 
 	//sysinfo
 	Frequency uint64 //主频
@@ -43,7 +44,7 @@ type DockerCpuInfo struct {
 }
 
 // 初始化container的CPU采集结构
-func NewDockerCpuInfo(interval time.Duration, is_pod bool, logger *zap.Logger) (*DockerCpuInfo, error) {
+func NewDockerCpuInfo(mul float64, interval time.Duration, logger *zap.Logger) (*DockerCpuInfo, error) {
 	var (
 		//quota    float64
 		core_num int
@@ -51,10 +52,10 @@ func NewDockerCpuInfo(interval time.Duration, is_pod bool, logger *zap.Logger) (
 	)
 
 	dc := &DockerCpuInfo{
+		Multiple: mul,
 		Interval: interval,
 		Logger:   logger,
 		Pid:      os.Getpid(),
-		IsPod:    is_pod,
 	}
 	//dc.Pid = 30368
 	dc_cgroup, err := NewCgroupSystem(dc.Pid, dc.IsPod)
@@ -119,6 +120,11 @@ func NewDockerCpuInfo(interval time.Duration, is_pod bool, logger *zap.Logger) (
 	return dc, nil
 }
 
+//设置pod标志
+func (c *DockerCpuInfo) SetPodSign() {
+	c.IsPod = true
+}
+
 //
 func (c *DockerCpuInfo) GetCpuPercentage() (uint64, error) {
 	var (
@@ -148,6 +154,10 @@ func (c *DockerCpuInfo) GetCpuPercentage() (uint64, error) {
 	c.OldSysCpuUsage = cur_system
 	c.OldTotalCpuUsage = cur_total
 	return ret_usage, nil
+}
+
+func (c *DockerCpuInfo) GetCpuBasicInfo() CpuBasic {
+	return CpuBasic{}
 }
 
 /*

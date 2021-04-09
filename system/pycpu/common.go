@@ -11,7 +11,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-const nanoSecondsPerSecond = 1e9
+const (
+	nanoSecondsPerSecond   = 1e9
+	DefaultMultipleFactors = 10
+)
+
+type CpuBasic struct {
+	IsPod     bool
+	Frequency uint64 //主频
+	Cores     uint64 //核心数
+	Quota     float64
+}
 
 // ErrNoCFSLimit is no quota limit
 var ErrNoCFSLimit = errors.Errorf("no quota limit")
