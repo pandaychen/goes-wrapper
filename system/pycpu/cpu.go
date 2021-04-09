@@ -3,12 +3,11 @@ package pycpu
 //非容器场景采集，由于psutils的cpu包是取interval进行采集，这里选择启动一个goroutine定时采集，外部程序只需要取当前的CPU数据即可
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/mem"
 	"go.uber.org/zap"
 )
 
@@ -68,14 +67,3 @@ func (c *CpuInfo) UpdateCpuBasicInfo() {
 func (c *CpuInfo) GetCpuBasicInfo() CpuBasic {
 	return CpuBasic{}
 }
-
-func (c *CpuInfo)GetMemoryInfo() (uint64, uint64, error){
-	 minfo, err := mem.VirtualMemory()
-	if err!=nil{
-		return 0,0,err
-	}
-	fmt.Println(minfo.UsedPercent)
-	return minfo.Total,minfo.Available,nil
-}
-
-
