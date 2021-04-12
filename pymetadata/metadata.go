@@ -17,21 +17,22 @@ func NewPyMetaData(m map[string]interface{}) PyMetaData {
 	}
 	nmd := new(PyMetaData)
 	for k, v := range m {
-		nmd[k] = v
+		(*nmd)[k] = v
 	}
-	return nmd
+	return *nmd
 }
 
-func (m *PyMetaData) Len() int {
+//Use m instead *m here
+func (m PyMetaData) Len() int {
 	return len(m)
 }
 
-func (m *PyMetaData) Add(key string, value interface{}) {
+func (m PyMetaData) Add(key string, value interface{}) {
 	m[key] = value
 	return
 }
 
-func (m *PyMetaData) Del(key string) interface{} {
+func (m PyMetaData) Del(key string) interface{} {
 	if _, exists := m[key]; exists {
 		v := m[key]
 		delete(m, key)
@@ -39,3 +40,14 @@ func (m *PyMetaData) Del(key string) interface{} {
 	}
 	return nil
 }
+
+/*
+func main() {
+	var key = "test"
+	m := NewPyMetaData(nil)
+	m.Add(key, []string{"1.1.1.1"})
+	fmt.Println(m)
+	m.Del(key)
+	fmt.Println(m)
+}
+*/
