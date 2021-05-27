@@ -125,13 +125,17 @@ func (c *Cbc256WithSalt) Encrypt(origin_text string) ([]byte, error) {
 	}
 	cbc := cipher.NewCBCEncrypter(cc, iv)
 	//fmt.Println(padded[aes.BlockSize:])
+
+	// 只从plaintext位置开始加密（上图）
 	cbc.CryptBlocks(padded[aes.BlockSize:], padded[aes.BlockSize:])
 	return padded, nil
 }
 
 //for decrypt
 func (c *Cbc256WithSalt) Decrypt(encrypt_str []byte) ([]byte, error) {
-	//
+	/*
+		|Salted__(8 byte)|salt(8 byte)|encrypt_text|
+	*/
 	if len(encrypt_str) < aes.BlockSize {
 		return nil, errors.New("length illegal")
 	}
@@ -152,6 +156,8 @@ func (c *Cbc256WithSalt) Decrypt(encrypt_str []byte) ([]byte, error) {
 	}
 	cbc := cipher.NewCBCDecrypter(cc, iv)
 	cbc.CryptBlocks(encrypt_str[aes.BlockSize:], encrypt_str[aes.BlockSize:])
+
+	//删除加密时候填充的padding
 	return pkcs7Unpading(encrypt_str[aes.BlockSize:])
 }
 
