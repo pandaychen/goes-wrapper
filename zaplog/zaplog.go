@@ -1,4 +1,4 @@
-package utils
+package zaplog
 
 //使用lumberjack.v2对zap日志进行压缩
 
