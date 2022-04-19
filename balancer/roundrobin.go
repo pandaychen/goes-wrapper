@@ -1,8 +1,9 @@
 package balancer
 
 import (
-	"errors"
 	"sync"
+
+	"github.com/pkg/errors"
 
 	"go.uber.org/zap"
 )
@@ -55,6 +56,8 @@ func (r *NginxWeightRoundrobin) AddNode(key string, server interface{}, weight i
 	defer r.lock.Unlock()
 	r.Nodes = append(r.Nodes, node)
 	r.Count++
+
+	return nil
 }
 
 func (r *NginxWeightRoundrobin) ResetAllNodes() {
