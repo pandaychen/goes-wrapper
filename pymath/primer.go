@@ -17,8 +17,8 @@ func (p *PyPrime) NormalCheck() bool {
 		return false
 	}
 	// sqrt(p.Number)
-	for i := 2; i*i <= n; i++ {
-		if p.Number%i == 0 {
+	for i := 2; uint64(i*i) <= p.Number; i++ {
+		if p.Number%uint64(i) == 0 {
 			return false
 		}
 	}

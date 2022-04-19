@@ -13,9 +13,9 @@ type PyProbability struct {
 	SeedLock sync.Mutex
 }
 
-func init(
+func init() {
 	rand.Seed(time.Now().UnixNano())
-)
+}
 
 func NewPyProbability() *PyProbability {
 	return &PyProbability{
@@ -25,11 +25,11 @@ func NewPyProbability() *PyProbability {
 
 // GET random N floats
 func (p *PyProbability) GetRandNFloats(min, max float64, n int) []float64 {
-    res := make([]float64, n)
-    for i := range res {
-        res[i] = min + p.Seed.Float64() * (max - min)
-    }
-    return res
+	res := make([]float64, n)
+	for i := range res {
+		res[i] = min + p.Seed.Float64()*(max-min)
+	}
+	return res
 }
 
 func (p *PyProbability) ProbablyTrue(proba float64) bool {
