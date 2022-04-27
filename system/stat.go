@@ -69,9 +69,9 @@ func StartPyCpuSystemMetrics(logger *zap.Logger, cputype string, mul float64, in
 	var cpunit PyCpuSystemMetrics
 	switch cputype {
 	case "cvm":
-		cpunit = pycpu.NewCpuInfo(mul, interval, logger)
+		cpunit = pycpu.NewCpuInfo(logger, mul, interval)
 	case "docker":
-		return pycpu.NewDockerCpuInfo(mul, interval, logger)
+		return pycpu.NewDockerCpuInfo(logger, mul, interval)
 	default:
 		return nil, errors.New("not support type")
 	}
