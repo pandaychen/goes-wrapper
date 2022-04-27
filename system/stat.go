@@ -12,6 +12,7 @@ import (
 
 const (
 	DEFAULT_SYSTEM_COLLECT_INTERVAL time.Duration = 600 * time.Millisecond
+	DEFAULT_CPU_MULTIPLY                          = 10 //默认放大倍数
 )
 
 //for cpu and docker-cpu
@@ -32,13 +33,13 @@ var (
 )
 
 //create a memory wrapper
-func NewPyMemorySystemMetrics(memtype string) (PyMemorySystemMetrics, error) {
+func NewPyMemorySystemMetrics(logger *zap.Logger, memtype string) (PyMemorySystemMetrics, error) {
 	var (
 		memunit PyMemorySystemMetrics
 		err     error
 	)
 	switch memtype {
-	case "cpu":
+	case "cvm":
 		memunit = pymem.NewNormalMem()
 	case "docker":
 		memunit = pymem.NewDockerMem()
@@ -64,10 +65,10 @@ func NewPyMemorySystemMetrics(memtype string) (PyMemorySystemMetrics, error) {
 }
 
 //create a wrapper
-func NewPyCpuSystemMetrics(cputype string, mul float64, interval time.Duration, logger *zap.Logger) (PyCpuSystemMetrics, error) {
+func NewPyCpuSystemMetrics(logger *zap.Logger, cputype string, mul float64, interval time.Duration) (PyCpuSystemMetrics, error) {
 	var cpunit PyCpuSystemMetrics
 	switch cputype {
-	case "cpu":
+	case "cvm":
 		cpunit = pycpu.NewCpuInfo(mul, interval, logger)
 	case "docker":
 		return pycpu.NewDockerCpuInfo(mul, interval, logger)

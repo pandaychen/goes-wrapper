@@ -4,7 +4,6 @@ package pycpu
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -20,7 +19,7 @@ type CpuInfo struct {
 	Multiple  float64 //放大倍数
 }
 
-func NewCpuInfo(mul float64, inter time.Duration, logger *zap.Logger) *CpuInfo {
+func NewCpuInfo(logger *zap.Logger, mul float64, inter time.Duration) *CpuInfo {
 	c := &CpuInfo{
 		Multiple: mul,
 		Interval: inter,
@@ -39,7 +38,6 @@ func (c *CpuInfo) GetCpuPercentage() (uint64, error) {
 		c.Multiple = DefaultMultipleFactors
 	}
 	percents, err = cpu.Percent(c.Interval, false) //[6.0000000055879354]
-	fmt.Println("xx", percents, err)
 	if err == nil {
 		usage = uint64(percents[0] * c.Multiple) // 扩大multiple倍
 	}

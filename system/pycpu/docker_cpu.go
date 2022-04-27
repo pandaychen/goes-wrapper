@@ -44,7 +44,7 @@ type DockerCpuInfo struct {
 }
 
 // 初始化container的CPU采集结构
-func NewDockerCpuInfo(mul float64, interval time.Duration, logger *zap.Logger) (*DockerCpuInfo, error) {
+func NewDockerCpuInfo(logger *zap.Logger, mul float64, interval time.Duration) (*DockerCpuInfo, error) {
 	var (
 		//quota    float64
 		core_num int
