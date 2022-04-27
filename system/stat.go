@@ -33,7 +33,7 @@ var (
 )
 
 //create a memory wrapper
-func NewPyMemorySystemMetrics(logger *zap.Logger, memtype string) (PyMemorySystemMetrics, error) {
+func StartPyMemorySystemMetrics(logger *zap.Logger, memtype string) (PyMemorySystemMetrics, error) {
 	var (
 		memunit PyMemorySystemMetrics
 		err     error
@@ -65,7 +65,7 @@ func NewPyMemorySystemMetrics(logger *zap.Logger, memtype string) (PyMemorySyste
 }
 
 //create a wrapper
-func NewPyCpuSystemMetrics(logger *zap.Logger, cputype string, mul float64, interval time.Duration) (PyCpuSystemMetrics, error) {
+func StartPyCpuSystemMetrics(logger *zap.Logger, cputype string, mul float64, interval time.Duration) (PyCpuSystemMetrics, error) {
 	var cpunit PyCpuSystemMetrics
 	switch cputype {
 	case "cvm":
