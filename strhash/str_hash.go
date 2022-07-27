@@ -1,5 +1,4 @@
-package hashalgo
-
+package strhash
 
 func Hash33(src string) int {
 	hash := 5381
