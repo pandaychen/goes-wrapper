@@ -17,22 +17,22 @@ type TokenbucketLimiter struct {
 	sync.Mutex
 
 	capacity      int64 //令牌桶容量
-	bucket        int64 //令牌桶当前
+	curBucketNum  int64 //令牌桶当前
 	rate          int64 //每秒（second）产生多少token数目
 	ratePerWindow int64
 	windowSize    int64 //每隔多少ms放一次token
 
 	//window * (rate/1000) 就是每经过window的时间，产生的token总数
-	last int64
+	lastTime int64
 }
 
 func NewRateLimiter(rate int64, window_size int64) *common.RateLimiter {
 	l := TokenbucketLimiter{}
 
-	l.last = time.Now().UnixNano()
+	l.lastTime = time.Now().UnixNano()
 
 	l.capacity = rate
-	l.bucket = 0
+	l.curBucketNum = 0
 	l.rate = rate
 	l.setWinSpanSize(window_size)
 	//计算流速

@@ -2,6 +2,10 @@ package common
 
 import "golang.org/x/net/context"
 
+const (
+	TIMEOUT_KEY = "timeout"
+)
+
 type RateLimiter interface {
 	//阻塞获取 tokens
 	AcquireTokensWithBlock(ctx context.Context, token int64) int64
