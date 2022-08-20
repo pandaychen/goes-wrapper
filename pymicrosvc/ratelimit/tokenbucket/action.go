@@ -59,7 +59,7 @@ func (l *TokenbucketLimiter) wait(needTokenNum int64) time.Duration {
 		waitWindowsNum int64
 	)
 	if needTokenNum <= 0 {
-		return
+		return time.Duration(0)
 	}
 
 	waitWindowsNum = needTokenNum / l.ratePerWindow

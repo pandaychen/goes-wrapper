@@ -37,7 +37,7 @@ func NewRateLimiter(rate int64, window_size int64) *common.RateLimiter {
 	l.setWinSpanSize(window_size)
 	//计算流速
 	l.calculationRate()
-	return &rate
+	return &l
 }
 
 //设置限流窗口大小
@@ -59,6 +59,10 @@ func (l *TokenbucketLimiter) calculationRate() {
 	var (
 		ratePerWindow int64
 	)
+	if l.rate == 0 {
+		//不限制
+		return
+	}
 	if ratePerWindow = int64(l.rate) / 1000 /*转为ms单位*/ * int64(l.windowSize); ratePerWindow > 0 {
 		l.ratePerWindow = ratePerWindow
 	} else {
