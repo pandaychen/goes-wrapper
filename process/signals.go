@@ -75,16 +75,23 @@ func WaitSignals(addr string, ln net.Listener, serverSock interface{}) error {
 		case s := <-signalCh:
 			switch s {
 			case syscall.SIGUSR2:
-				newProcess, err := forkNewProcessWithListener(ln, addr)
+				/*
+					tcpListener, ok := serverSock.(*net.TCPListener)
+					if !ok {
+					}
+					tcpListener.SetDeadline(time.Now())
+				*/
+				//Spawn child process
+				_, err := forkNewProcessWithListener(ln, addr)
 				if err != nil {
 					continue
 				}
 
 				switch serverSock.(type) {
 				case *http.Server:
-					ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+					serverSock.(*http.Server).Close()
+					ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 					defer cancel()
-
 					// Return any errors during shutdown.
 					return serverSock.(*http.Server).Shutdown(ctx)
 				}

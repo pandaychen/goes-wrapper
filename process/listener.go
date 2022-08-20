@@ -52,6 +52,11 @@ func (l *ProcListener) ImportEnvListener() (net.Listener, error) {
 		return nil, fmt.Errorf("listener ip not equal env=%s,new=%s", envListener.Addr, l.Addr)
 	}
 
+	//更新成员
+	l.Addr = envListener.Addr
+	l.FD = envListener.FD
+	l.Filename = envListener.Filename
+
 	// The file has already been passed to this process, extract the file
 	// descriptor and name from the metadata to rebuild/find the *os.File for
 	// the listener
@@ -64,6 +69,7 @@ func (l *ProcListener) ImportEnvListener() (net.Listener, error) {
 	// Create a net.Listener from the *os.File
 	ln, err := net.FileListener(listenerFile)
 	if err != nil {
+		fmt.Println(err, l.Filename, listenerFile)
 		return nil, err
 	}
 
