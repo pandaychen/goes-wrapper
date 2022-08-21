@@ -44,7 +44,7 @@ func NewLimitReader(src io.Reader, rate int, calculateMd5 bool) *LimitIOReader {
 	return NewLimitReaderWithLimiter(newRateLimiterWithDefaultWindow(rate), src, calculateMd5)
 }
 
-// 修改Reader实现
+// 修改Reader实现，强制在读端限速
 func (rl *LimitIOReader) Read(p []byte) (n int, err error) {
 	n, e := rl.SrcReader.Read(p)
 	if e != nil && e != io.EOF {
@@ -80,6 +80,7 @@ func copyFileWithLimit(sourceFile, destFile string) {
 		fmt.Println(copyErr.Error())
 		return
 	} else {
+		fmt.Printf("new md5=%x", limitReader.Md5sum.Sum(nil))
 		return
 	}
 }
