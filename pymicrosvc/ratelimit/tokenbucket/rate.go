@@ -26,7 +26,7 @@ type TokenbucketLimiter struct {
 	lastTime int64
 }
 
-func NewRateLimiter(rate int64, window_size int64) *common.RateLimiter {
+func NewRateLimiter(rate int64, window_size int64) common.RateLimiter {
 	l := TokenbucketLimiter{}
 
 	l.lastTime = time.Now().UnixNano()
