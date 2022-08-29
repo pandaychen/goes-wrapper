@@ -52,3 +52,10 @@ func main() {
 	fmt.Println(int64(Duration2Now()),Duration2Now())	// 34128000000137802 9480h0m0.00013898s
 }
 */
+
+type TimeFormat string
+
+// Format 格式化
+func (ts TimeFormat) Format(t time.Time) string {
+	return t.Format(string(ts))
+}
