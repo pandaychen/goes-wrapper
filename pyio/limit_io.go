@@ -13,11 +13,18 @@ import (
 	"github.com/pandaychen/goes-wrapper/pymicrosvc/ratelimit/tokenbucket"
 )
 
-// LimitReader read stream with RateLimiter.
+// LimitIOReader read stream with RateLimiter.
 type LimitIOReader struct {
 	SrcReader io.Reader
 	Limiter   common.RateLimiter
 	Md5sum    hash.Hash //for MD5
+}
+
+// LimitIOWriter write stream with RateLimiter.
+type LimitIOWriter struct {
+	DestWriter io.Writer
+	Limiter    common.RateLimiter
+	Md5sum     hash.Hash //for MD5
 }
 
 // srcReader: reader
@@ -33,6 +40,20 @@ func NewLimitReaderWithLimiter(limiter common.RateLimiter, srcReader io.Reader, 
 		Limiter:   limiter,
 		SrcReader: srcReader,
 		Md5sum:    md5sum,
+	}
+}
+
+func NewLimitWriterWithLimiter(limiter common.RateLimiter, destWriter io.Writer, wantMd5 bool) *LimitIOWriter {
+	var (
+		md5sum hash.Hash
+	)
+	if wantMd5 {
+		md5sum = md5.New()
+	}
+	return &LimitIOWriter{
+		Limiter:    limiter,
+		DestWriter: destWriter,
+		Md5sum:     md5sum,
 	}
 }
 
@@ -57,6 +78,24 @@ func (rl *LimitIOReader) Read(p []byte) (n int, err error) {
 		rl.Limiter.AcquireTokensWithBlock(context.TODO(), int64(n))
 	}
 	return n, e
+}
+
+// Write writes bytes from p.
+func (wl *LimitIOWriter) Write(p []byte) (int, error) {
+	if wl.Limiter == nil {
+		return wl.DestWriter.Write(p)
+	}
+	n, err := wl.DestWriter.Write(p)
+	if err != nil {
+		//account error
+		return n, err
+	} else {
+		if wl.Md5sum != nil {
+			wl.Md5sum.Write(p[:n])
+		}
+		wl.Limiter.AcquireTokensWithBlock(context.TODO(), int64(n))
+		return n, nil
+	}
 }
 
 func copyFileWithLimit(sourceFile, destFile string) {
@@ -85,6 +124,32 @@ func copyFileWithLimit(sourceFile, destFile string) {
 	}
 }
 
+func copyFileWithWriterLimit(sourceFile, destFile string) {
+	file, err := os.Open(sourceFile)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	dstFile, err := os.Create("destFile")
+	if err != nil {
+		panic(err)
+	}
+
+	buf := make([]byte, 2*1024)
+	TotalLimit := tokenbucket.NewRateLimiter((1024 * 512), 2)
+	limitWriter := NewLimitWriterWithLimiter(TotalLimit, dstFile, true)
+	_, copyErr := io.CopyBuffer(limitWriter, file, buf)
+	if copyErr != nil {
+		fmt.Println(copyErr.Error())
+		return
+	} else {
+		fmt.Printf("new md5=%x", limitWriter.Md5sum.Sum(nil))
+		return
+	}
+}
+
 func main() {
-	copyFileWithLimit("./test_file", "test_file.bak")
+	//copyFileWithLimit("./test_file", "test_file.bak")
+	copyFileWithWriterLimit("./test_file", "test_file.bak")
 }
