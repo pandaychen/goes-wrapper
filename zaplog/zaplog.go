@@ -12,19 +12,22 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-func InitLumberjack() *lumberjack.Logger {
+func InitLumberjack(logpath string) *lumberjack.Logger {
+	if logpath == "" {
+		logpath = "../log/default.log"
+	}
 	hook := lumberjack.Logger{
-		Filename:   "../log/default.log", // 日志文件路径
-		MaxSize:    512,                  // 每个日志文件保存的最大尺寸 单位：M
-		MaxBackups: 30,                   // 日志文件最多保存多少个备份
-		MaxAge:     7,                    // 文件最多保存多少天
-		Compress:   true,                 // 是否压缩
+		Filename:   logpath, // 日志文件路径
+		MaxSize:    512,     // 每个日志文件保存的最大尺寸 单位：M
+		MaxBackups: 30,      // 日志文件最多保存多少个备份
+		MaxAge:     7,       // 文件最多保存多少天
+		Compress:   true,    // 是否压缩
 	}
 	return &hook
 }
 
-func ZapLoggerInit(logname string) (*zap.Logger, error) {
-	lumberhooker := InitLumberjack()
+func ZapLoggerInit(logname, logfilepath string) (*zap.Logger, error) {
+	lumberhooker := InitLumberjack(logfilepath)
 	if lumberhooker == nil {
 		fmt.Println("[ERROR]Lumberjack Init Error")
 		return nil, errors.New("InitLumberjack error")
