@@ -2,6 +2,8 @@ package pytime
 
 import (
 	"context"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -58,4 +60,62 @@ type TimeFormat string
 // Format 格式化
 func (ts TimeFormat) Format(t time.Time) string {
 	return t.Format(string(ts))
+}
+
+var (
+	//1970-01-01 08:00:00 +0800 CST
+	zeroTime = time.Unix(0, 0)
+
+	TS TimeFormat = "2006-01-02 15:04:05"
+)
+
+func Duration(s string) time.Duration {
+	duration, err := time.ParseDuration(s)
+	if err != nil {
+		panic(err)
+	}
+	return duration
+}
+
+func Str2Duration(str string) (time.Duration, error) {
+	dur, err := time.ParseDuration(str)
+	if err != nil {
+		return time.Duration(0), err
+	}
+	return dur, nil
+}
+
+type TimeFormat string
+
+// Format 格式化
+func (ts TimeFormat) Format(t time.Time) string {
+	return t.Format(string(ts))
+}
+
+// ParseInLocation parse time with location from env "TZ", if "TZ" hasn't been set then we use UTC by default.
+func ParseInLocation(layout, value string) (time.Time, error) {
+	loc, err := time.LoadLocation(os.Getenv("TZ"))
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.ParseInLocation(layout, value, loc)
+}
+
+// parseDate returns time.Date given string containing number of days since Jan 1, 1970,or zero value of time.Time if the string is empty.
+func ParseDate(date string) (time.Time, error) {
+	if date == "" {
+		return time.Time{}, nil
+	}
+
+	days, err := strconv.Atoi(date)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return time.Date(1970, 0, 0, 0, 0, 0, 0, time.UTC).AddDate(0, 0, days), nil
+}
+
+// IsZero reports whether t represents the zero time instant
+func IsZero(t time.Time) bool {
+	return t.IsZero() || zeroTime.Equal(t)
 }
